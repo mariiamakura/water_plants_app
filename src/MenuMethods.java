@@ -36,6 +36,7 @@ public class MenuMethods {
         System.out.println("In how many days do you want to water \u001B[32m" + newPlant.name + "\u001B[0m? Enter the number of days: ");
         if (input.hasNextInt()) {
             int userTime = input.nextInt();
+            newPlant.setDuration(userTime);
             input.nextLine();
 
             LocalDate currentDate = LocalDate.now();

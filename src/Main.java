@@ -6,32 +6,31 @@ import java.util.Scanner;
 import java.io.*;
 import java.nio.file.*;
 import javax.swing.JOptionPane;
+import javax.xml.crypto.Data;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Scanner input = new Scanner(System.in);
         PlantList myList = new PlantList();
         Plant plant;
-        File file = null;
-        String answer;
 
         System.out.println("\nHi! This little program will help you to water \u001B[32myour plants\u001B[0m on time :)");
 
         System.out.println("Can you tell me your name? Enter: ");
         String userName = input.nextLine();
 
-        file = DataManage.findFile(input, myList, userName);
-        if (file == null) {
+        File file = new File("data/" + userName + ".txt");
+        if (!file.exists()) {
             System.out.println("I could not find your account. Do you want to create one? yes/no: ");
-            answer = input.nextLine();
+            String answer = input.nextLine();
             if (answer.equalsIgnoreCase("yes")) {
-                file = DataManage.createFile(userName);
                 System.out.println("Account created");
             } else {
                 System.out.println("Ok, see you next time!");
                 return;
             }
         } else {
+            DataManage.loadData(file, myList);
             myList.viewAllPlants();
         }
 
@@ -75,6 +74,7 @@ public class Main {
                 }
                 case "0" -> {
                     System.out.println("Thanks for using this program. See you soon! :)");
+                    return;
                 }
             }
             myList.saveData(file);
