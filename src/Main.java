@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.io.*;
 import java.nio.file.*;
+import javax.swing.JOptionPane;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -20,27 +21,29 @@ public class Main {
         String userName = input.nextLine();
 
         file = DataManage.findFile(input, myList, userName);
-            if (file == null) {
-                System.out.println("I could not find your account. Do you want to create one? yes/no: ");
-                answer = input.nextLine();
-                if (answer.equalsIgnoreCase("yes")) {
-                    file = DataManage.createFile(userName);
-                    System.out.println("Account created");
-                }
-                else {
-                    System.out.println("Ok, see you next time!");
-                    return;
-                }
+        if (file == null) {
+            System.out.println("I could not find your account. Do you want to create one? yes/no: ");
+            answer = input.nextLine();
+            if (answer.equalsIgnoreCase("yes")) {
+                file = DataManage.createFile(userName);
+                System.out.println("Account created");
+            } else {
+                System.out.println("Ok, see you next time!");
+                return;
             }
+        } else {
+            myList.viewAllPlants();
+        }
 
+        DataManage.popUpMessage(myList);
         while (true) {
             System.out.println("==============================================");
             System.out.println("You can do the following actions. Please, enter the number to start it:");
             System.out.println("1: add new plant");
             System.out.println("2: view all plants");
-            System.out.println("3: set new watering time");
-            System.out.println("4: delete the plant");
-            System.out.println("5: delete all plants");
+            System.out.println("3: change watering time");
+            System.out.println("4: remove a plant");
+            System.out.println("5: remove all plants");
             System.out.println("0: exit");
             System.out.println("Enter your choice: ");
 
@@ -53,27 +56,25 @@ public class Main {
                 case "2" -> myList.viewAllPlants();
                 case "3" -> {
                     plant = MenuMethods.askPlantName(input, myList);
-                    if (plant != null){
+                    if (plant != null) {
                         MenuMethods.setWaterTime(input, plant, myList);
                     }
                 }
                 case "4" -> {
                     plant = MenuMethods.askPlantName(input, myList);
-                    if (plant != null){
+                    if (plant != null) {
                         myList.deletePlant(plant);
                     }
                 }
                 case "5" -> {
-                    if (myList.isListEmpty()){
+                    if (myList.isListEmpty()) {
                         System.out.println("The is no plants on your list");
-                    }
-                    else {
+                    } else {
                         myList.deleteAllPlants();
                     }
                 }
                 case "0" -> {
                     System.out.println("Thanks for using this program. See you soon! :)");
-                    return;
                 }
             }
             myList.saveData(file);

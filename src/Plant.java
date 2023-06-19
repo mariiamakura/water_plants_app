@@ -4,13 +4,13 @@ import java.time.*;
 public class Plant implements Serializable{
 
     String name;
-    LocalDateTime userWateringTime;
+    LocalDate userWateringTime;
 
     public Plant(String name) {
         this.name = name;
     }
 
-    public void setWateringTime(LocalDateTime userWateringTime) {
+    public void setWateringTime(LocalDate userWateringTime) {
         this.userWateringTime = userWateringTime;
     }
 }

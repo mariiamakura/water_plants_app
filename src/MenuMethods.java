@@ -1,7 +1,9 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.io.*;
+import javax.swing.JOptionPane;
 
 public class MenuMethods {
 
@@ -26,31 +28,33 @@ public class MenuMethods {
         myList.plantList.add(newPlant);
 
         System.out.println("\nCongrats! Now \u001B[32m" + myList.getPlant(plantName).name + " \u001B[0mis on your list!\n");
-        System.out.println("Do you want to set watering time for \u001B[32m" + plantName + "\u001B[0m? yes/no: ");
-        answer = inputScanner.nextLine();
-        if (answer.equalsIgnoreCase("yes")){
-            setWaterTime(inputScanner, newPlant, myList);
-        }
+        System.out.println("Please set the watering time for \u001B[32m" + plantName + "\u001B[0m");
+        setWaterTime(inputScanner, newPlant, myList);
     }
 
-    static void setWaterTime(Scanner inputScanner, Plant newPlant, PlantList myList) {
-        System.out.println("Enter watering time in format yyyy mm dd hh:mm: ");
-        String userTime = inputScanner.nextLine();
-        DateTimeFormatter userWateringPlant = DateTimeFormatter.ofPattern("yyyy MM dd HH:mm"); //formatting variable
-        LocalDateTime timeOfWatering = LocalDateTime.parse(userTime, userWateringPlant); //already formatted variable
+    static void setWaterTime(Scanner input, Plant newPlant, PlantList myList){
+        System.out.println("In how many days do you want to water \u001B[32m" + newPlant.name + "\u001B[0m? Enter the number of days: ");
+        if (input.hasNextInt()) {
+            int userTime = input.nextInt();
+            input.nextLine();
 
-        if (myList.setNextWaterTime(newPlant, timeOfWatering)){
-            myList.wateringTimeForPrint(newPlant);
-        }
-        else {
-            System.out.println("Do you want to set watering time for \u001B[32m" + newPlant.name + "\u001B[0m again? yes/no: ");
-            String answer = inputScanner.nextLine();
-            if (answer.equalsIgnoreCase("yes")){
-                setWaterTime(inputScanner, newPlant, myList);
+            LocalDate currentDate = LocalDate.now();
+            LocalDate wateringDate = currentDate.plusDays(userTime);
+            if (myList.setNextWaterTime(newPlant, wateringDate)) {
+                myList.wateringTimeForPrint(newPlant);
+            } else {
+                System.out.println("Do you want to set watering time for \u001B[32m" + newPlant.name + "\u001B[0m again? yes/no: ");
+                String answer = input.nextLine();
+                if (answer.equalsIgnoreCase("yes")) {
+                    setWaterTime(input, newPlant, myList);
+                }
             }
         }
+        else {
+            System.out.println("Please, enter the number next time :)");
+            input.nextLine();
+        }
     }
-
     static Plant askPlantName(Scanner inputScanner, PlantList myList)
     {
         System.out.println("Enter the plant name: ");

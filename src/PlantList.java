@@ -1,27 +1,25 @@
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.io.*;
 import java.util.Iterator;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class PlantList{
 
     ArrayList<Plant> plantList = new ArrayList<Plant>();
 
     public void saveData(File file) throws IOException {
-        if (isListEmpty()){
-            System.out.println("Your plant list is empty. There is nothing to save");
-            if (!file.delete()){
-                System.out.println("Error occurred while deleting the file");
-            }
-            return;
-        }
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
             for (Plant myPlant : plantList) {
                 oos.writeObject(myPlant);
             }
         }
     }
+
     public Plant getPlant(String nameOfPlant){
         for(Plant myPlant : plantList){
             if (myPlant.name.equalsIgnoreCase(nameOfPlant)) {
@@ -40,8 +38,8 @@ public class PlantList{
         return false;
     }
 
-    public boolean setNextWaterTime(Plant Plant, LocalDateTime newTime) {
-        LocalDateTime currentTime = LocalDateTime.now();
+        public boolean setNextWaterTime(Plant Plant, LocalDate newTime) {
+        LocalDate currentTime = LocalDate.now();
         if (newTime.isBefore(currentTime)) {
             System.out.println("Your watering time is in the past!");
             return false;
@@ -53,15 +51,12 @@ public class PlantList{
     }
 
     public void wateringTimeForPrint(Plant myPlant) {
-        LocalDateTime currentDate = LocalDateTime.now();
-        LocalDateTime userWateringTime = myPlant.userWateringTime;
+        LocalDate currentDate = LocalDate.now();
+        LocalDate userWateringTime = myPlant.userWateringTime;
 
-        Duration duration = Duration.between(currentDate, userWateringTime);
-        long days = duration.toDays();
-        long hours = duration.toHours() % 24;
-        long minutes = duration.toMinutes() % 60;
+        long days = ChronoUnit.DAYS.between(currentDate, userWateringTime);
 
-        System.out.println("You should water \u001B[32m" + myPlant.name + "\u001B[0m in " + days + " days, " + hours + " hours, and " + minutes + " minutes.\n");
+        System.out.println("You should water \u001B[32m" + myPlant.name + "\u001B[0m in " + days + " days : " + myPlant.userWateringTime + "\n");
     }
 
     public void viewAllPlants() {
@@ -73,7 +68,6 @@ public class PlantList{
         System.out.println("\nYou have these plants on your list: \n");
         for (Plant myPlant : plantList) {
             System.out.print("\u001B[32m" + myPlant.name + "\u001B[0m - ");
-            System.out.println("Next watering time : " + myPlant.userWateringTime);
             wateringTimeForPrint(myPlant);
         }
     }
@@ -83,17 +77,47 @@ public class PlantList{
     }
 
     public void deletePlant(Plant plant){
-        plantList.remove(plant);
-        System.out.println("\u001B[32m" + plant.name + "\u001B[0m" + " is removed");
+        Scanner input = new Scanner(System.in);
+        System.out.println("You sure you want to remove " + "\u001B[32m" + plant.name + "\u001B[0m" + " from the list? yes/no: ");
+        String answer = input.nextLine();
+        if (answer.equalsIgnoreCase("yes")) {
+            plantList.remove(plant);
+            System.out.println("\u001B[32m" + plant.name + "\u001B[0m" + " is removed");
+        }
     }
 
     public void deleteAllPlants() {
-        Iterator<Plant> iterator = plantList.iterator();
-        while (iterator.hasNext()) {
-            iterator.next();
-            iterator.remove();
+
+        Scanner input = new Scanner(System.in);
+        System.out.println("You sure you want to remove all plants from the list? yes/no: ");
+        String answer = input.nextLine();
+        if (answer.equalsIgnoreCase("yes")) {
+            Iterator<Plant> iterator = plantList.iterator();
+            while (iterator.hasNext()) {
+                iterator.next();
+                iterator.remove();
+            }
+            System.out.println("All plants have been deleted.");
         }
-        System.out.println("All plants have been deleted.");
     }
 
+    public boolean todayIsTime(){
+        LocalDate currentDate = LocalDate.now();
+        for(Plant myPlant : plantList){
+            if (myPlant.userWateringTime.equals(currentDate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Plant todayIsPlant(){
+        LocalDate currentDate = LocalDate.now();
+        for(Plant myPlant : plantList){
+            if (myPlant.userWateringTime.equals(currentDate)) {
+                return myPlant;
+            }
+        }
+        return null;
+    }
 }

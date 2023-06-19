@@ -1,6 +1,7 @@
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class DataManage {
     static File createFile (String userName) throws IOException {
@@ -9,6 +10,7 @@ public class DataManage {
         return file.toFile();
     }
 
+///serialize
     static File findFile(Scanner inputScanner, PlantList myList, String name) throws IOException, ClassNotFoundException {
         String targetFileName = name + ".txt";
 
@@ -38,6 +40,14 @@ public class DataManage {
             System.out.println("All data has been loaded");
         } finally {
             ois.close();
+        }
+    }
+
+    static void popUpMessage(PlantList myList){
+        if (myList.todayIsTime()){
+            Plant todayPlant = myList.todayIsPlant();
+            String message = "Don't forget to water " + todayPlant.name + " today!";
+            JOptionPane.showMessageDialog(null, message);
         }
     }
 }
