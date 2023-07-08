@@ -1,3 +1,3 @@
 # water_plants_app
 
-small watering calendar for your plants
+small watering reminder app for your plants
